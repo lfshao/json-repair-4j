@@ -1,0 +1,47 @@
+# system ignore
+.DS_Store
+Thumbs.db
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+.factorypath
+
+# idea ignore
+.idea/
+!/.idea/icon.png
+*.ipr
+*.iml
+*.iws
+
+# vscode ignore
+.vscode/
+
+# maven ignore
+target/
+*.class
+*.jar
+*.war
+*.zip
+*.tar
+*.tar.gz
+dependency-reduced-pom.xml
+.flattened-pom.xml
+pom.xml.versionsBackup
+
+# antlr ignore
+gen/
+*.tokens
+
+# temp ignore
+logs/
+*.log
+*.tlog
+*.doc
+*.cache
+*.diff
+*.patch
+*.tmp
+
+.claude/
