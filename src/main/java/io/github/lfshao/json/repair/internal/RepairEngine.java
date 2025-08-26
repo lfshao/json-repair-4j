@@ -229,6 +229,7 @@ public final class RepairEngine {
 	private String parseString(Scanner s) {
 		char quote = s.next();
 		StringBuilder content = new StringBuilder();
+		boolean closeOnNextQuoteAfterCommaQuote = false;
 		while (!s.eof()) {
 			char c = s.next();
 			if (c == '\\') {
@@ -281,6 +282,18 @@ public final class RepairEngine {
 				continue;
 			}
 			if (c == quote) {
+				// Special pattern: immediately followed by ," → treat this quote as content and close at the next quote
+				char im1 = s.peekOrEOF();
+				char im2 = s.has(1) ? s.peekAt(1) : 0;
+				if (im1 == ',' && im2 == '"') {
+					content.append('\\').append('"');
+					closeOnNextQuoteAfterCommaQuote = true;
+					continue;
+				}
+				if (closeOnNextQuoteAfterCommaQuote) {
+					// Close here regardless of la
+					break;
+				}
 				char la = s.peekNonSpaceOrEOF();
 				if (la == ',' || la == '}' || la == ']' || la == ':' || la == 0) {
 					// treat as closing quote

@@ -81,4 +81,11 @@ class JsonRepairTest {
 		String out = JsonRepair.repair(in);
 		assertEquals("{\"foo\":\"bar\"}", out);
 	}
+
+	@Test
+	void trailingQuoteThenCommaShouldStayInString() {
+		String in = "{\n    \"bar\": \"123\",\",\n    \"foo\": \"456\"\n}";
+		String out = JsonRepair.repair(in);
+		assertEquals("{\"bar\":\"123\\\",\",\"foo\":\"456\"}", out);
+	}
 } 
