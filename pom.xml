@@ -5,8 +5,30 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.lfshao</groupId>
     <artifactId>json-repair-4j</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>json-repair-4j</name>
+    <description>A pure Java JSON string repair utility: take a possibly malformed JSON-like string and return a strictly valid (RFC 8259) JSON string.</description>
+    <url>https://github.com/lfshao/json-repair-4j</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>lfshao</id>
+            <name>lfshao</name>
+            <url>https://github.com/lfshao</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/lfshao/json-repair-4j.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/lfshao/json-repair-4j.git</developerConnection>
+        <url>https://github.com/lfshao/json-repair-4j</url>
+        <tag>HEAD</tag>
+    </scm>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -29,6 +51,60 @@
                 <version>3.2.5</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <source>8</source>
+                    <failOnError>false</failOnError>
+                    <additionalJOptions>-Xdoclint:none</additionalJOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
                 </configuration>
             </plugin>
         </plugins>
