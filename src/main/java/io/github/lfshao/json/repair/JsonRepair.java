@@ -1,53 +1,57 @@
-/*
- * Copyright (c) 2025.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.github.lfshao.json.repair;
 
-import io.github.lfshao.json.repair.internal.RepairEngine;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A tolerant JSON string repair utility.
- * <p>
- * This class provides a single entry point {@link #repair(String)} that accepts a possibly malformed
- * JSON-like string and returns a strictly valid JSON string (RFC 8259 compliant). The implementation
- * performs a forgiving scan and structural fix, and finally emits a minified JSON string.
- * </p>
+ * JSON修复工具的主入口类
+ * 提供修复格式不正确的JSON字符串的功能
  */
-public final class JsonRepair {
+public class JsonRepair {
 
-	private JsonRepair() {
-		// Utility class; prevent instantiation.
-	}
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-	/**
-	 * Repairs a possibly malformed JSON-like input string into a valid JSON string.
-	 * <ul>
-	 *     <li>Removes comments, normalizes special literals, and filters illegal control characters.</li>
-	 *     <li>Repairs strings (e.g., unescaped quotes, unfinished strings) and keys (auto-quote identifiers).</li>
-	 *     <li>Repairs structure (missing commas/colons, trailing commas, unbalanced brackets).</li>
-	 *     <li>Evaluates simple arithmetic expressions in value context. Invalid results become {@code null}.</li>
-	 *     <li>Wraps multiple top-level values into an array.</li>
-	 * </ul>
-	 *
-	 * @param input possibly malformed JSON string
-	 * @return strict, minified JSON string
-	 */
-	public static String repair(String input) {
-		if (input == null) {
-			return "null";
-		}
-		return new RepairEngine().repair(input);
-	}
+    /**
+     * 修复格式不正确的JSON字符串
+     *
+     * @param jsonStr 需要修复的JSON字符串
+     * @return 修复后的有效JSON字符串
+     */
+    public static String repair(String jsonStr) {
+        if (jsonStr == null || jsonStr.isEmpty()) {
+            return "";
+        }
+
+        JsonParser parser = new JsonParser(jsonStr, false, false);
+
+        // 首先尝试使用标准JSON解析器
+        try {
+            Object parsed = objectMapper.readValue(jsonStr, Object.class);
+            String result = objectMapper.writeValueAsString(parsed);
+
+            // 检查是否Jackson只解析了部分内容（多JSON情况）
+            // 如果结果比输入短，可能存在多JSON
+            if (result.length() < jsonStr.trim().length()) {
+                // 可能存在多JSON，使用修复解析器
+                throw new JsonProcessingException("Possible multiple JSON elements") {
+                };
+            }
+
+            return result;
+        } catch (JsonProcessingException e) {
+            // 标准解析失败，使用修复解析器
+            Object parsed = parser.parse();
+
+            if (parsed == null || "".equals(parsed)) {
+                return "";
+            }
+
+            try {
+                return objectMapper.writeValueAsString(parsed);
+            } catch (JsonProcessingException ex) {
+                // 如果还是无法序列化，返回原字符串
+                return jsonStr;
+            }
+        }
+    }
 } 

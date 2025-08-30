@@ -1,135 +1,142 @@
-# json-repair-4j
+# JSON Repair 4J
 
-[中文说明 (Chinese)](README_CN.md)
+[中文版 README](README_CN.md) | English
 
-A pure Java JSON string repair utility: take a possibly malformed JSON-like string and return a strictly valid (RFC 8259) JSON string.
+A tool for repairing invalid JSON strings.
 
 ## Features
-- Tolerant repair capabilities:
-  - Unescaped double quotes: naked `"` inside strings will be auto-escaped, unless it directly precedes a structural terminator (`, ] } :`) or the end of input
-  - Single/backtick-quoted strings: normalized to standard double-quoted JSON strings
-  - Unquoted object keys: auto-quoted
-  - Missing/excess separators: missing colons/commas will be added; trailing commas removed
-  - Unbalanced brackets: fixed or completed according to context
-  - Comments: remove `// ...` and `/* ... */`
-  - Special literals: `NaN`, `Infinity/-Infinity`, `undefined`, `None` → `null`
-  - Number normalization: `.5→0.5`, `1.→1`, `+1→1`, `1_000→1000` (keeps valid exponent forms)
-  - Escape repair: `\xNN` → `\u00NN`; control characters normalized to `\u00XX`
-  - Expression evaluation: arithmetic expressions in value position (`+ - * / %`, unary `±`, parentheses) are safely evaluated; failure or `NaN/∞` → `null`
-  - Multiple top-level values: wrapped into an array `[v1, v2, ...]`
-  - Markdown awareness: automatically strips JSON from inline backticks or fenced code blocks
+
+## Supported Repair Types
+
+- ✅ **Missing Quotes**: Automatically add quotes for object keys and string values
+- ✅ **Missing Separators**: Automatically add missing commas and colons
+- ✅ **Missing Brackets**: Automatically complete missing braces and brackets
+- ✅ **Escape Characters**: Properly handle escape sequences in strings
+- ✅ **Unicode Characters**: Support Unicode characters (not escaped by default)
+- ✅ **Comment Removal**: Remove single-line comments (`//`, `#`) and multi-line comments (`/* */`)
+- ✅ **Mixed Quotes**: Support mixed single and double quotes
+- ✅ **Number Format**: Fix invalid number formats, support large number handling
+- ✅ **Boolean and null**: Fix incorrectly cased boolean and null values
+- ✅ **Multi-JSON Merge**: Automatically merge multiple consecutive JSONs into an array
 
 ## Quick Start
 
-### Installation (choose one)
-
-- Maven Central (recommended, if released):
+### Maven Dependency
 
 ```xml
 <dependency>
-  <groupId>io.github.lfshao</groupId>
-  <artifactId>json-repair-4j</artifactId>
-  <version>0.1.0</version>
+    <groupId>io.github.lfshao</groupId>
+    <artifactId>json-repair-4j</artifactId>
+    <version>0.3.0</version>
 </dependency>
 ```
 
-- Gradle (Groovy DSL):
-
-```groovy
-dependencies {
-  implementation 'io.github.lfshao:json-repair-4j:0.1.0'
-}
-```
-
-- Gradle (Kotlin DSL):
-
-```kotlin
-dependencies {
-  implementation("io.github.lfshao:json-repair-4j:0.1.0")
-}
-```
-
-### Usage Example
+### Basic Usage
 
 ```java
 import io.github.lfshao.json.repair.JsonRepair;
 
-public class Demo {
+public class Example {
     public static void main(String[] args) {
-        String raw = "/* cmt */{a:1, 'b': 'x', s:\"abc\"def\" , n: 1+3}";
-        String fixed = JsonRepair.repair(raw);
-        System.out.println(fixed); // {"a":1,"b":"x","s":"abc\"def","n":4}
+        // Repair JSON with missing quotes
+        String malformed = "{name: John, age: 30, city: New York}";
+        String repaired = JsonRepair.repair(malformed);
+        System.out.println(repaired);
+        // Output: {"name":"John","age":30,"city":"New York"}
+
+        // Repair JSON with missing brackets
+        String incomplete = "[1, 2, 3, 4";
+        String fixed = JsonRepair.repair(incomplete);
+        System.out.println(fixed);
+        // Output: [1,2,3,4]
+
+        // Repair JSON with mixed issues
+        String complex = "{name: 'John', items: [apple, banana, 'cherry'}";
+        String result = JsonRepair.repair(complex);
+        System.out.println(result);
+        // Output: {"name":"John","items":["apple","banana","cherry"]}
+
+        // Repair JSON with comments
+        String withComments = "{\n  // User info\n  \"name\": \"John\",\n  \"age\": 30 /* age */\n}";
+        String cleaned = JsonRepair.repair(withComments);
+        System.out.println(cleaned);
+        // Output: {"name":"John","age":30}
+
+        // Repair and merge multiple JSONs
+        String multiJson = "[1,2,3]{\"key\":\"value\"}";
+        String merged = JsonRepair.repair(multiJson);
+        System.out.println(merged);
+        // Output: [[1,2,3],{"key":"value"}]
     }
 }
 ```
 
-Markdown input is supported as well (the fenced/inline code section will be extracted first):
+## API Documentation
 
-```text
-```json
-{"foo":"bar"}
-```
-```
+### JsonRepair.repair(String jsonStr)
 
-or:
+Repairs malformed JSON strings.
 
-```text
-`{"foo":"bar"}`
-```
+**Parameters:**
+- `jsonStr` - The JSON string to be repaired
 
-Both will produce:
+**Returns:**
+- A valid JSON string after repair
 
-```json
-{"foo":"bar"}
+**Example:**
+```java
+String result = JsonRepair.repair("{name: John}");
+// Returns: {"name":"John"}
 ```
 
-## Repair Rules (Details)
-- Strings:
-  - May start with `"`/`'`/`` ` ``; naked `"` inside is treated as content and auto-escaped unless it directly precedes `, ] } :` or end of input
-  - Invalid/isolated escapes are converted to valid `\u00XX`
-- Numbers:
-  - Normalized, minimal output; remove underscores, fix leading/trailing dots and plus signs
-- Expressions:
-  - Only numbers and operators `+ - * / %`, parentheses `()`; unary `±`; standard precedence
-  - Any identifiers/functions cause failure → `null`
-  - Division by zero and overflow → `null`
-- Structure:
-  - Missing commas, trailing commas, missing colons, and missing closing brackets are repaired according to context
-  - Multiple top-level values are wrapped into an array
-- Comments and control characters:
-  - Remove `//...` and `/*...*/`; filter invisible control chars (keep `\t\n\r`)
+## Implementation Principles
 
-## Examples
-- Unescaped double quote:
-  - In: `{"s":"abc"def"}`
-  - Out: `{"s":"abc\"def"}`
-- Expression:
-  - In: `{"n": (2+5)*0.5}`
-  - Out: `{"n":3.5}`
-- Unquoted key / single quotes:
-  - In: `{a:1, 'b':'x'}`
-  - Out: `{"a":1,"b":"x"}`
-- Comments:
-  - In: `/* c */{\n // c2\n a:1 // tail\n }`
-  - Out: `{"a":1}`
-- Multiple top-level values:
-  - In: `{a:1}{b:2}`
-  - Out: `[{"a":1},{"b":2}]`
+This tool is implemented based on the logic of the Python `json-repair` library, using a recursive descent parser:
 
-## API
-- `public final class JsonRepair`
-  - `public static String repair(String input)`: repairs input to a valid JSON string (minified)
+1. **Lexical Analysis**: Character-by-character scanning of the input string
+2. **Syntax Analysis**: Parse structure according to JSON grammar rules
+3. **Error Repair**: Use heuristic rules to fix common errors
+4. **Output Generation**: Generate standard JSON format strings
 
-## Build & Test
-- Run tests:
+### Core Components
+
+- `JsonParser`: Main parser that coordinates all sub-parsers
+- `StringParser`: String parsing and repair
+- `ObjectParser`: Object parsing and repair
+- `ArrayParser`: Array parsing and repair
+- `NumberParser`: Number parsing and repair
+- `BooleanNullParser`: Boolean and null parsing
+- `CommentParser`: Comment processing
+
+## Test Cases
+
+The project includes comprehensive test cases covering various JSON repair scenarios:
 
 ```bash
 mvn test
 ```
 
-## Constraints
-- No third-party JSON libraries (JUnit 5 used only for tests)
-- Output is guaranteed to be RFC 8259 compliant JSON
+## Building the Project
+
+```bash
+# Compile
+mvn compile
+
+# Run tests
+mvn test
+
+# Package
+mvn package
+```
 
 ## License
-Apache License 2.0. See `LICENSE` or `http://www.apache.org/licenses/LICENSE-2.0`. 
+
+Apache License 2.0
+
+## Contributing
+
+Issues and Pull Requests are welcome!
+
+## Acknowledgments
+
+This project is implemented based on the logic of the Python [json-repair](https://github.com/mangiucugna/json_repair) library. Thanks to the original author for their excellent work. 
