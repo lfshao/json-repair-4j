@@ -268,30 +268,7 @@ public class JsonParser {
         return streamStable;
     }
 
-    // 便利方法供其他解析器调用
-    public Object parseObject() {
-        return objectParser.parseObject();
-    }
 
-    public List<Object> parseArray() {
-        return arrayParser.parseArray();
-    }
-
-    public Object parseString() {
-        return stringParser.parseString();
-    }
-
-    public Object parseNumber() {
-        return numberParser.parseNumber();
-    }
-
-    public Object parseBooleanOrNull() {
-        return booleanNullParser.parseBooleanOrNull();
-    }
-
-    public Object parseComment() {
-        return commentParser.parseComment();
-    }
 
     /**
      * 日志条目类

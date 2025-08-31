@@ -48,9 +48,9 @@ public class ArrayParser implements JsonElementParser {
                 i = parser.skipWhitespacesAt(i + 1, false);
                 Character nextChar = parser.getCharAt(i);
                 if (nextChar != null && nextChar == ':') {
-                    value = parser.parseObject();
+                    value = new ObjectParser(parser).parseObject();
                 } else {
-                    value = parser.parseString();
+                    value = new StringParser(parser).parseString();
                 }
             } else {
                 value = parser.parseJson();

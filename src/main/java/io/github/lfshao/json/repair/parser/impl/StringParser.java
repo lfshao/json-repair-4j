@@ -43,7 +43,7 @@ public class StringParser implements JsonElementParser {
 
         Character ch = parser.getCharAt(0);
         if (ch != null && (ch == '#' || ch == '/')) {
-            return parser.parseComment();
+            return new CommentParser(parser).parseComment();
         }
 
         // A valid string can only start with a valid quote or, in our case, with a literal
@@ -69,7 +69,7 @@ public class StringParser implements JsonElementParser {
             if ((ch.toString().equalsIgnoreCase("t") || ch.toString().equalsIgnoreCase("f") ||
                     ch.toString().equalsIgnoreCase("n")) &&
                     parser.getContext().getCurrent() != ContextValues.OBJECT_KEY) {
-                Object value = parser.parseBooleanOrNull();
+                Object value = new BooleanNullParser(parser).parseBooleanOrNull();
                 if (!"".equals(value)) {
                     return value;
                 }

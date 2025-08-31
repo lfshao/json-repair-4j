@@ -77,7 +77,7 @@ public class ObjectParser implements JsonElementParser {
                     if (prevKey != null && obj.get(prevKey) instanceof List) {
                         // If the previous key's value is an array, parse the new array and merge
                         parser.setIndex(parser.getIndex() + 1);
-                        List<Object> newArray = parser.parseArray();
+                        List<Object> newArray = new ArrayParser(parser).parseArray();
                         if (newArray != null) {
                             // Merge and flatten the arrays
                             Object prevValue = obj.get(prevKey);
@@ -99,7 +99,7 @@ public class ObjectParser implements JsonElementParser {
                     }
                 }
 
-                Object keyResult = parser.parseString();
+                Object keyResult = new StringParser(parser).parseString();
                 key = keyResult != null ? keyResult.toString() : "";
 
                 if (key.isEmpty()) {

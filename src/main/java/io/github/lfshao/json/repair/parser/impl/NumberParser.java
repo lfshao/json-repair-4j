@@ -62,7 +62,7 @@ public class NumberParser implements JsonElementParser {
         } else if (ch != null && Character.isLetter(ch)) {
             // this was a string instead, sorry
             parser.setIndex(parser.getIndex() - numberStr.length());
-            return parser.parseString();
+            return new StringParser(parser).parseString();
         }
 
         try {
