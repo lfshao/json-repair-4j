@@ -1,6 +1,6 @@
-package io.github.lfshao.json.repair.parsers;
+package io.github.lfshao.json.repair.parser;
 
-import io.github.lfshao.json.repair.JsonContext;
+import io.github.lfshao.json.repair.core.JsonContext;
 
 /**
  * JSON元素解析器接口
@@ -20,5 +20,5 @@ public interface JsonElementParser {
      * @param context 解析上下文
      * @return 如果可以处理返回true
      */
-    boolean canHandle(Character ch, JsonContext context);
+    boolean accept(Character ch, JsonContext context);
 } 

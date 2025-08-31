@@ -1,7 +1,8 @@
-package io.github.lfshao.json.repair.parsers;
+package io.github.lfshao.json.repair.parser.impl;
 
-import io.github.lfshao.json.repair.JsonContext;
-import io.github.lfshao.json.repair.JsonParser;
+import io.github.lfshao.json.repair.core.JsonContext;
+import io.github.lfshao.json.repair.core.JsonParser;
+import io.github.lfshao.json.repair.parser.JsonElementParser;
 
 /**
  * 布尔值和null解析器
@@ -20,7 +21,7 @@ public class BooleanNullParser implements JsonElementParser {
     }
 
     @Override
-    public boolean canHandle(Character ch, JsonContext context) {
+    public boolean accept(Character ch, JsonContext context) {
         // BooleanNullParser通常由StringParser内部调用，不直接由主解析器调用
         return false;
     }

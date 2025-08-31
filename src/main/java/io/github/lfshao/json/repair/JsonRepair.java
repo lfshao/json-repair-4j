@@ -3,6 +3,7 @@ package io.github.lfshao.json.repair;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.lfshao.json.repair.core.JsonParser;
 
 /**
  * JSON修复工具的主入口类

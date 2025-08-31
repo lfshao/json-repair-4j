@@ -1,8 +1,9 @@
-package io.github.lfshao.json.repair.parsers;
+package io.github.lfshao.json.repair.parser.impl;
 
-import io.github.lfshao.json.repair.JsonContext;
-import io.github.lfshao.json.repair.JsonContext.ContextValues;
-import io.github.lfshao.json.repair.JsonParser;
+import io.github.lfshao.json.repair.core.JsonContext;
+import io.github.lfshao.json.repair.core.JsonContext.ContextValues;
+import io.github.lfshao.json.repair.core.JsonParser;
+import io.github.lfshao.json.repair.parser.JsonElementParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,7 @@ public class CommentParser implements JsonElementParser {
     }
 
     @Override
-    public boolean canHandle(Character ch, JsonContext context) {
+    public boolean accept(Character ch, JsonContext context) {
         return ch != null && (ch == '#' || ch == '/');
     }
 

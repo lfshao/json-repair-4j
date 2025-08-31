@@ -1,4 +1,4 @@
-package io.github.lfshao.json.repair;
+package io.github.lfshao.json.repair.core;
 
 import java.util.ArrayList;
 import java.util.List;

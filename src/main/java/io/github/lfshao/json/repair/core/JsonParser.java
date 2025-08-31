@@ -1,6 +1,9 @@
-package io.github.lfshao.json.repair;
+package io.github.lfshao.json.repair.core;
 
-import io.github.lfshao.json.repair.parsers.*;
+import io.github.lfshao.json.repair.core.JsonContext;
+import io.github.lfshao.json.repair.core.ObjectComparer;
+import io.github.lfshao.json.repair.parser.*;
+import io.github.lfshao.json.repair.parser.impl.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,17 +122,17 @@ public class JsonParser {
 
             // 使用责任链模式查找合适的解析器
             for (JsonElementParser parser : parsers) {
-                if (parser.canHandle(ch, context)) {
+                if (parser.accept(ch, context)) {
                     // 对于对象和数组，需要先跳过开始字符
                     if (parser instanceof ObjectParser || parser instanceof ArrayParser) {
-                        index++;
+                index++;
                     }
                     return parser.parse();
-                }
+            }
             }
             
             // 如果没有解析器能处理，就忽略当前字符并继续
-            index++;
+                index++;
         }
     }
 
