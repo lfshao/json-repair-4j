@@ -1,6 +1,7 @@
 package io.github.lfshao.json.repair;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -10,6 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonRepair {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
+    }
 
     /**
      * 修复格式不正确的JSON字符串
@@ -27,17 +31,7 @@ public class JsonRepair {
         // 首先尝试使用标准JSON解析器
         try {
             Object parsed = objectMapper.readValue(jsonStr, Object.class);
-            String result = objectMapper.writeValueAsString(parsed);
-
-            // 检查是否Jackson只解析了部分内容（多JSON情况）
-            // 如果结果比输入短，可能存在多JSON
-            if (result.length() < jsonStr.trim().length()) {
-                // 可能存在多JSON，使用修复解析器
-                throw new JsonProcessingException("Possible multiple JSON elements") {
-                };
-            }
-
-            return result;
+            return objectMapper.writeValueAsString(parsed);
         } catch (JsonProcessingException e) {
             // 标准解析失败，使用修复解析器
             Object parsed = parser.parse();

@@ -77,12 +77,9 @@ public class StringParser {
         if (parser.getCharAt(0) != null && JsonParser.STRING_DELIMITERS.contains(parser.getCharAt(0)) &&
                 parser.getCharAt(0) == lstringDelimiter) {
             // If it's an empty key, this was easy
-            int nextNonSpaceIndex = parser.skipWhitespacesAt(1, false);
-            Character nextNonSpaceChar = parser.getCharAt(nextNonSpaceIndex);
-            if ((parser.getContext().getCurrent() == ContextValues.OBJECT_KEY &&
-                    nextNonSpaceChar != null && nextNonSpaceChar == ':') ||
-                    (parser.getContext().getCurrent() == ContextValues.OBJECT_VALUE &&
-                            nextNonSpaceChar != null && (nextNonSpaceChar == ',' || nextNonSpaceChar == '}'))) {
+            Character nextChar = parser.getCharAt(1);
+            if ((parser.getContext().getCurrent() == ContextValues.OBJECT_KEY && nextChar != null && nextChar == ':') ||
+                    (parser.getContext().getCurrent() == ContextValues.OBJECT_VALUE && nextChar != null && (nextChar == ',' || nextChar == '}'))) {
                 parser.setIndex(parser.getIndex() + 1);
                 return "";
             } else if (parser.getCharAt(1) != null && parser.getCharAt(1) == lstringDelimiter) {
@@ -110,7 +107,7 @@ public class StringParser {
                     parser.log("While parsing a string, we found a doubled quote but also another quote afterwards, ignoring it");
                     parser.setIndex(parser.getIndex() + 1);
                     return "";
-                } else if (nextC != null && !Arrays.asList(',', ']', '}').contains(nextC)) {
+                } else if (nextC == null || !Arrays.asList(',', ']', '}').contains(nextC)) {
                     parser.log("While parsing a string, we found a doubled quote but it was a mistake, removing one quote");
                     parser.setIndex(parser.getIndex() + 1);
                 }
@@ -401,7 +398,7 @@ public class StringParser {
                         boolean allWhitespace = true;
                         for (int j = 1; j < i; j++) {
                             Character cAtJ = parser.getCharAt(j);
-                            if (cAtJ == null || !Character.isWhitespace(cAtJ)) {
+                            if (cAtJ != null && !Character.isWhitespace(cAtJ)) {
                                 allWhitespace = false;
                                 break;
                             }
@@ -459,7 +456,7 @@ public class StringParser {
                                 i = parser.skipToCharacter(Arrays.asList(rstringDelimiter, ']'), i + 1);
                                 nextC = parser.getCharAt(i);
                             }
-                            if (evenDelimiters && nextC != null && nextC != ']') {
+                            if (evenDelimiters && (nextC == null || nextC != ']')) {
                                 // If we got up to here it means that this is a situation like this:
                                 // ["bla bla bla "puppy" bla bla bla "kitty" bla bla"]
                                 // So we need to ignore this quote

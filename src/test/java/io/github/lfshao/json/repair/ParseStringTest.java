@@ -153,7 +153,7 @@ public class ParseStringTest {
                 JsonRepair.repair("{\"real_content\": \"Some string: Some other string \\t Some string <a href=\\\"https://domain.com\\\">Some link</a>\"}"));
 
         assertEquals("{\"key_1\":\"value\"}",
-                JsonRepair.repair("{\"key_1\\n\": \"value\"}"));
+                JsonRepair.repair("{\"key_1\n\": \"value\"}"));
 
         assertEquals("{\"key\\t_\":\"value\"}",
                 JsonRepair.repair("{\"key\\t_\": \"value\"}"));
@@ -213,5 +213,21 @@ public class ParseStringTest {
         // 测试字符串中的逗号和换行符组合
         assertEquals("{\"data\":\"value1,\\nvalue2\"}",
                 JsonRepair.repair("{\"data\": \"value1,\\nvalue2\"}"));
+    }
+
+        
+    @Test
+    public void testStringWithInternalQuotes() {
+        // 测试字符串中包含内部引号的情况
+        // 这是一个关键的测试用例，用于验证数组上下文中内部引号的处理
+        assertEquals("[\"lorem \\\"ipsum\\\" sic\"]", 
+                    JsonRepair.repair("[\"lorem \"ipsum\" sic\"]"));
+        
+        // 其他相关的测试用例
+        assertEquals("[\"hello \\\"world\\\" test\"]", 
+                    JsonRepair.repair("[\"hello \"world\" test\"]"));
+        
+        assertEquals("[\"start \\\"middle\\\" end\"]", 
+                    JsonRepair.repair("[\"start \"middle\" end\"]"));
     }
 } 

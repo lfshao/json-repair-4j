@@ -102,9 +102,11 @@ public class ObjectParser {
             }
 
             if (parser.getContext().contains(ContextValues.ARRAY) && obj.containsKey(key)) {
-                parser.log("While parsing an object we found a duplicate key, ignoring the duplicate key");
-                // Instead of trying to modify the JSON string, we'll simply ignore the duplicate key
-                // and continue parsing, which effectively ends the object at this point
+                parser.log("While parsing an object we found a duplicate key, closing the object here and rolling back the index");
+                parser.setIndex(rollbackIndex - 1);
+                // add an opening curly brace to make this work
+                String jsonStr = parser.getJsonStr();
+                parser.setJsonStr(jsonStr.substring(0, parser.getIndex() + 1) + "{" + jsonStr.substring(parser.getIndex() + 1));
                 break;
             }
 

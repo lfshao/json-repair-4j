@@ -17,7 +17,7 @@ public class JsonParser {
     public static final List<Character> STRING_DELIMITERS = Arrays.asList('"', '\'', '"', '"');
 
     // 解析的字符串
-    private final String jsonStr;
+    private String jsonStr;
     // 解析上下文
     private final JsonContext context;
     // 是否启用日志记录
@@ -247,6 +247,10 @@ public class JsonParser {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public void setJsonStr(String jsonStr) {
+        this.jsonStr = jsonStr;
     }
 
     public JsonContext getContext() {

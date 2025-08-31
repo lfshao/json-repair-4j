@@ -47,9 +47,8 @@ public class JsonRepairTest {
         assertEquals("[{\"key\":\"value\"},[1,2,3,true]]",
                 JsonRepair.repair("{\"key\":\"value\"}[1,2,3,True]"));
 
-        // 注意：Java版本可能不会处理markdown代码块，这个测试可能会失败
-        // assertEquals("[{\"key\":\"value\"},[1,2,3,true]]", 
-        //             JsonRepair.repairJson("lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42"));
+        assertEquals("[{\"key\":\"value\"},[1,2,3,true]]", 
+                    JsonRepair.repair("lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42"));
     }
 
     @Test
