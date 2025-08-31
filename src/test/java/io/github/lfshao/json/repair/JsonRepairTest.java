@@ -47,8 +47,8 @@ public class JsonRepairTest {
         assertEquals("[{\"key\":\"value\"},[1,2,3,true]]",
                 JsonRepair.repair("{\"key\":\"value\"}[1,2,3,True]"));
 
-        assertEquals("[{\"key\":\"value\"},[1,2,3,true]]", 
-                    JsonRepair.repair("lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42"));
+        assertEquals("[{\"key\":\"value\"},[1,2,3,true]]",
+                JsonRepair.repair("lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42"));
     }
 
     @Test

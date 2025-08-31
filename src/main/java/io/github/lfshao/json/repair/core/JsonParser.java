@@ -1,8 +1,6 @@
 package io.github.lfshao.json.repair.core;
 
-import io.github.lfshao.json.repair.core.JsonContext;
-import io.github.lfshao.json.repair.core.ObjectComparer;
-import io.github.lfshao.json.repair.parser.*;
+import io.github.lfshao.json.repair.parser.JsonElementParser;
 import io.github.lfshao.json.repair.parser.impl.*;
 
 import java.util.ArrayList;
@@ -18,9 +16,6 @@ public class JsonParser {
 
     // 字符串分隔符常量
     public static final List<Character> STRING_DELIMITERS = Arrays.asList('"', '\'', '“', '”');
-
-    // 解析的字符串
-    private String jsonStr;
     // 解析上下文
     private final JsonContext context;
     // 是否启用日志记录
@@ -38,6 +33,8 @@ public class JsonParser {
     private final NumberParser numberParser;
     private final BooleanNullParser booleanNullParser;
     private final CommentParser commentParser;
+    // 解析的字符串
+    private String jsonStr;
     // 当前索引位置
     private int index;
 
@@ -56,14 +53,14 @@ public class JsonParser {
         this.numberParser = new NumberParser(this);
         this.booleanNullParser = new BooleanNullParser(this);
         this.commentParser = new CommentParser(this);
-        
+
         // 初始化解析器注册表（按优先级排序）
         this.parsers = Arrays.asList(
-            this.objectParser,      // {
-            this.arrayParser,       // [
-            this.commentParser,     // # 或 /
-            this.stringParser,      // 字符串和字母
-            this.numberParser       // 数字
+                this.objectParser,      // {
+                this.arrayParser,       // [
+                this.commentParser,     // # 或 /
+                this.stringParser,      // 字符串和字母
+                this.numberParser       // 数字
         );
     }
 
@@ -125,14 +122,14 @@ public class JsonParser {
                 if (parser.accept(ch, context)) {
                     // 对于对象和数组，需要先跳过开始字符
                     if (parser instanceof ObjectParser || parser instanceof ArrayParser) {
-                index++;
+                        index++;
                     }
                     return parser.parse();
+                }
             }
-            }
-            
+
             // 如果没有解析器能处理，就忽略当前字符并继续
-                index++;
+            index++;
         }
     }
 
@@ -244,16 +241,16 @@ public class JsonParser {
         return jsonStr;
     }
 
+    public void setJsonStr(String jsonStr) {
+        this.jsonStr = jsonStr;
+    }
+
     public int getIndex() {
         return index;
     }
 
     public void setIndex(int index) {
         this.index = index;
-    }
-
-    public void setJsonStr(String jsonStr) {
-        this.jsonStr = jsonStr;
     }
 
     public JsonContext getContext() {
@@ -267,7 +264,6 @@ public class JsonParser {
     public boolean isStreamStable() {
         return streamStable;
     }
-
 
 
     /**

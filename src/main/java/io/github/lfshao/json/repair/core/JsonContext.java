@@ -12,6 +12,7 @@ public class JsonContext {
     private final List<ContextValues> context;
     private ContextValues current;
     private boolean empty;
+
     public JsonContext() {
         this.context = new ArrayList<>();
         this.current = null;

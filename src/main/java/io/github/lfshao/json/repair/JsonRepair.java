@@ -12,6 +12,7 @@ import io.github.lfshao.json.repair.core.JsonParser;
 public class JsonRepair {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     static {
         objectMapper.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
     }

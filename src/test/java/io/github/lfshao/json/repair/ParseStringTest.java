@@ -215,19 +215,19 @@ public class ParseStringTest {
                 JsonRepair.repair("{\"data\": \"value1,\\nvalue2\"}"));
     }
 
-        
+
     @Test
     public void testStringWithInternalQuotes() {
         // 测试字符串中包含内部引号的情况
         // 这是一个关键的测试用例，用于验证数组上下文中内部引号的处理
-        assertEquals("[\"lorem \\\"ipsum\\\" sic\"]", 
-                    JsonRepair.repair("[\"lorem \"ipsum\" sic\"]"));
-        
+        assertEquals("[\"lorem \\\"ipsum\\\" sic\"]",
+                JsonRepair.repair("[\"lorem \"ipsum\" sic\"]"));
+
         // 其他相关的测试用例
-        assertEquals("[\"hello \\\"world\\\" test\"]", 
-                    JsonRepair.repair("[\"hello \"world\" test\"]"));
-        
-        assertEquals("[\"start \\\"middle\\\" end\"]", 
-                    JsonRepair.repair("[\"start \"middle\" end\"]"));
+        assertEquals("[\"hello \\\"world\\\" test\"]",
+                JsonRepair.repair("[\"hello \"world\" test\"]"));
+
+        assertEquals("[\"start \\\"middle\\\" end\"]",
+                JsonRepair.repair("[\"start \"middle\" end\"]"));
     }
 } 
