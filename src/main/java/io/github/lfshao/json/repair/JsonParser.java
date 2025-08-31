@@ -26,7 +26,9 @@ public class JsonParser {
     private final List<LogEntry> logger;
     // 流稳定模式
     private final boolean streamStable;
-    // 子解析器
+    // 解析器注册表
+    private final List<JsonElementParser> parsers;
+    // 子解析器实例（用于内部调用）
     private final ArrayParser arrayParser;
     private final ObjectParser objectParser;
     private final StringParser stringParser;
@@ -51,6 +53,15 @@ public class JsonParser {
         this.numberParser = new NumberParser(this);
         this.booleanNullParser = new BooleanNullParser(this);
         this.commentParser = new CommentParser(this);
+        
+        // 初始化解析器注册表（按优先级排序）
+        this.parsers = Arrays.asList(
+            this.objectParser,      // {
+            this.arrayParser,       // [
+            this.commentParser,     // # 或 /
+            this.stringParser,      // 字符串和字母
+            this.numberParser       // 数字
+        );
     }
 
     /**
@@ -106,30 +117,19 @@ public class JsonParser {
                 return "";
             }
 
-            // <object> 以 '{' 开始
-            if (ch == '{') {
-                index++;
-                return objectParser.parseObject();
+            // 使用责任链模式查找合适的解析器
+            for (JsonElementParser parser : parsers) {
+                if (parser.canHandle(ch, context)) {
+                    // 对于对象和数组，需要先跳过开始字符
+                    if (parser instanceof ObjectParser || parser instanceof ArrayParser) {
+                        index++;
+                    }
+                    return parser.parse();
+                }
             }
-            // <array> 以 '[' 开始
-            else if (ch == '[') {
-                index++;
-                return arrayParser.parseArray();
-            }
-            // <string> 以引号开始
-            else if (!context.isEmpty() && (STRING_DELIMITERS.contains(ch) || Character.isLetter(ch))) {
-                return stringParser.parseString();
-            }
-            // <number> 以 [0-9] 或减号开始
-            else if (!context.isEmpty() && (Character.isDigit(ch) || ch == '-' || ch == '.')) {
-                return numberParser.parseNumber();
-            } else if (ch == '#' || ch == '/') {
-                return commentParser.parseComment();
-            }
-            // 如果其他都失败了，我们就忽略并继续
-            else {
-                index++;
-            }
+            
+            // 如果没有解析器能处理，就忽略当前字符并继续
+            index++;
         }
     }
 
@@ -263,6 +263,31 @@ public class JsonParser {
 
     public boolean isStreamStable() {
         return streamStable;
+    }
+
+    // 便利方法供其他解析器调用
+    public Object parseObject() {
+        return objectParser.parseObject();
+    }
+
+    public List<Object> parseArray() {
+        return arrayParser.parseArray();
+    }
+
+    public Object parseString() {
+        return stringParser.parseString();
+    }
+
+    public Object parseNumber() {
+        return numberParser.parseNumber();
+    }
+
+    public Object parseBooleanOrNull() {
+        return booleanNullParser.parseBooleanOrNull();
+    }
+
+    public Object parseComment() {
+        return commentParser.parseComment();
     }
 
     /**

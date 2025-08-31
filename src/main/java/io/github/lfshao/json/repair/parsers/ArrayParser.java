@@ -1,5 +1,6 @@
 package io.github.lfshao.json.repair.parsers;
 
+import io.github.lfshao.json.repair.JsonContext;
 import io.github.lfshao.json.repair.JsonContext.ContextValues;
 import io.github.lfshao.json.repair.JsonParser;
 import io.github.lfshao.json.repair.ObjectComparer;
@@ -10,12 +11,22 @@ import java.util.List;
 /**
  * 数组解析器
  */
-public class ArrayParser {
+public class ArrayParser implements JsonElementParser {
 
     private final JsonParser parser;
 
     public ArrayParser(JsonParser parser) {
         this.parser = parser;
+    }
+
+    @Override
+    public Object parse() {
+        return parseArray();
+    }
+
+    @Override
+    public boolean canHandle(Character ch, JsonContext context) {
+        return ch != null && ch == '[';
     }
 
     public List<Object> parseArray() {
@@ -36,9 +47,9 @@ public class ArrayParser {
                 i = parser.skipWhitespacesAt(i + 1, false);
                 Character nextChar = parser.getCharAt(i);
                 if (nextChar != null && nextChar == ':') {
-                    value = new ObjectParser(parser).parseObject();
+                    value = parser.parseObject();
                 } else {
-                    value = new StringParser(parser).parseString();
+                    value = parser.parseString();
                 }
             } else {
                 value = parser.parseJson();

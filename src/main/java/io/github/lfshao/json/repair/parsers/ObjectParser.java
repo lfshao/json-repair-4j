@@ -1,5 +1,6 @@
 package io.github.lfshao.json.repair.parsers;
 
+import io.github.lfshao.json.repair.JsonContext;
 import io.github.lfshao.json.repair.JsonContext.ContextValues;
 import io.github.lfshao.json.repair.JsonParser;
 
@@ -11,12 +12,22 @@ import java.util.Map;
 /**
  * 对象解析器
  */
-public class ObjectParser {
+public class ObjectParser implements JsonElementParser {
 
     private final JsonParser parser;
 
     public ObjectParser(JsonParser parser) {
         this.parser = parser;
+    }
+
+    @Override
+    public Object parse() {
+        return parseObject();
+    }
+
+    @Override
+    public boolean canHandle(Character ch, JsonContext context) {
+        return ch != null && ch == '{';
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +76,7 @@ public class ObjectParser {
                     if (prevKey != null && obj.get(prevKey) instanceof List) {
                         // If the previous key's value is an array, parse the new array and merge
                         parser.setIndex(parser.getIndex() + 1);
-                        List<Object> newArray = new ArrayParser(parser).parseArray();
+                        List<Object> newArray = parser.parseArray();
                         if (newArray != null) {
                             // Merge and flatten the arrays
                             Object prevValue = obj.get(prevKey);
@@ -87,7 +98,7 @@ public class ObjectParser {
                     }
                 }
 
-                Object keyResult = new StringParser(parser).parseString();
+                Object keyResult = parser.parseString();
                 key = keyResult != null ? keyResult.toString() : "";
 
                 if (key.isEmpty()) {

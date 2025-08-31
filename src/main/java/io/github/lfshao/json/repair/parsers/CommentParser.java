@@ -1,5 +1,6 @@
 package io.github.lfshao.json.repair.parsers;
 
+import io.github.lfshao.json.repair.JsonContext;
 import io.github.lfshao.json.repair.JsonContext.ContextValues;
 import io.github.lfshao.json.repair.JsonParser;
 
@@ -10,12 +11,22 @@ import java.util.List;
 /**
  * 注释解析器
  */
-public class CommentParser {
+public class CommentParser implements JsonElementParser {
 
     private final JsonParser parser;
 
     public CommentParser(JsonParser parser) {
         this.parser = parser;
+    }
+
+    @Override
+    public Object parse() {
+        return parseComment();
+    }
+
+    @Override
+    public boolean canHandle(Character ch, JsonContext context) {
+        return ch != null && (ch == '#' || ch == '/');
     }
 
     public Object parseComment() {

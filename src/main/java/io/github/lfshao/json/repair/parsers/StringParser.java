@@ -1,5 +1,6 @@
 package io.github.lfshao.json.repair.parsers;
 
+import io.github.lfshao.json.repair.JsonContext;
 import io.github.lfshao.json.repair.JsonContext.ContextValues;
 import io.github.lfshao.json.repair.JsonParser;
 
@@ -10,12 +11,22 @@ import java.util.Map;
 /**
  * 字符串解析器 - 完全对应Python版本parse_string.py的逻辑
  */
-public class StringParser {
+public class StringParser implements JsonElementParser {
 
     private final JsonParser parser;
 
     public StringParser(JsonParser parser) {
         this.parser = parser;
+    }
+
+    @Override
+    public Object parse() {
+        return parseString();
+    }
+
+    @Override
+    public boolean canHandle(Character ch, JsonContext context) {
+        return !context.isEmpty() && (JsonParser.STRING_DELIMITERS.contains(ch) || Character.isLetter(ch));
     }
 
     public Object parseString() {
@@ -31,7 +42,7 @@ public class StringParser {
 
         Character ch = parser.getCharAt(0);
         if (ch != null && (ch == '#' || ch == '/')) {
-            return new CommentParser(parser).parseComment();
+            return parser.parseComment();
         }
 
         // A valid string can only start with a valid quote or, in our case, with a literal
@@ -60,7 +71,7 @@ public class StringParser {
             if ((ch.toString().equalsIgnoreCase("t") || ch.toString().equalsIgnoreCase("f") ||
                     ch.toString().equalsIgnoreCase("n")) &&
                     parser.getContext().getCurrent() != ContextValues.OBJECT_KEY) {
-                Object value = new BooleanNullParser(parser).parseBooleanOrNull();
+                Object value = parser.parseBooleanOrNull();
                 if (!"".equals(value)) {
                     return value;
                 }

@@ -1,5 +1,6 @@
 package io.github.lfshao.json.repair.parsers;
 
+import io.github.lfshao.json.repair.JsonContext;
 import io.github.lfshao.json.repair.JsonContext.ContextValues;
 import io.github.lfshao.json.repair.JsonParser;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * 数字解析器
  */
-public class NumberParser {
+public class NumberParser implements JsonElementParser {
 
     private static final Set<Character> NUMBER_CHARS = new HashSet<>();
 
@@ -24,6 +25,16 @@ public class NumberParser {
 
     public NumberParser(JsonParser parser) {
         this.parser = parser;
+    }
+
+    @Override
+    public Object parse() {
+        return parseNumber();
+    }
+
+    @Override
+    public boolean canHandle(Character ch, JsonContext context) {
+        return !context.isEmpty() && ch != null && (Character.isDigit(ch) || ch == '-' || ch == '.');
     }
 
     public Object parseNumber() {
@@ -50,7 +61,7 @@ public class NumberParser {
         } else if (ch != null && Character.isLetter(ch)) {
             // this was a string instead, sorry
             parser.setIndex(parser.getIndex() - numberStr.length());
-            return new StringParser(parser).parseString();
+            return parser.parseString();
         }
 
         try {
