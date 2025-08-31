@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.lfshao</groupId>
     <artifactId>json-repair-4j</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <name>json-repair-4j</name>
     <description>A pure Java JSON string repair utility: take a possibly malformed JSON-like string and return a strictly valid (RFC 8259) JSON string.</description>
     <url>https://github.com/lfshao/json-repair-4j</url>
@@ -29,6 +29,7 @@
         <url>https://github.com/lfshao/json-repair-4j</url>
         <tag>HEAD</tag>
     </scm>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -110,6 +111,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>validated</waitUntil>
                 </configuration>
             </plugin>
         </plugins>

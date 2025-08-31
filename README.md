@@ -27,7 +27,7 @@ A tool for repairing invalid JSON strings.
 <dependency>
     <groupId>io.github.lfshao</groupId>
     <artifactId>json-repair-4j</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ```
 
