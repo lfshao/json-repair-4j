@@ -60,12 +60,9 @@ public class StringParser implements JsonElementParser {
         // Ensuring we use the right delimiter
         if (ch == '\'') {
             lstringDelimiter = rstringDelimiter = '\'';
-        } else if (ch == '"') {
-            lstringDelimiter = '"';
-            rstringDelimiter = '"';
-        } else if (ch == '"') {
-            lstringDelimiter = '"';
-            rstringDelimiter = '"';
+        } else if (ch == '“') {
+            lstringDelimiter = '“';
+            rstringDelimiter = '”';
         } else if (Character.isLetterOrDigit(ch)) {
             // This could be a <boolean> and not a string. Because (T)rue or (F)alse or (N)ull are valid
             // But remember, object keys are only of type string

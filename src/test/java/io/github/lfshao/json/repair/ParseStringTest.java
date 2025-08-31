@@ -36,7 +36,7 @@ public class ParseStringTest {
                 JsonRepair.repair("{\"name\": John, \"age\": 30, \"city\": \"New York\"}"));
 
         assertEquals("{\"slanted_delimiter\":\"value\"}",
-                JsonRepair.repair("{\"slanted_delimiter\": \"value\"}"));
+                JsonRepair.repair("{“slanted_delimiter”: \"value\"}"));
 
         assertEquals("{\"name\":\"John\",\"age\":30,\"city\":\"New\"}",
                 JsonRepair.repair("{\"name\": \"John\", \"age\": 30, \"city\": \"New\"}"));

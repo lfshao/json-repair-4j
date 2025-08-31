@@ -17,7 +17,7 @@ import java.util.List;
 public class JsonParser {
 
     // 字符串分隔符常量
-    public static final List<Character> STRING_DELIMITERS = Arrays.asList('"', '\'', '"', '"');
+    public static final List<Character> STRING_DELIMITERS = Arrays.asList('"', '\'', '“', '”');
 
     // 解析的字符串
     private String jsonStr;
