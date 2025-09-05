@@ -41,13 +41,13 @@ public class NumberParser implements JsonElementParser {
     public Object parseNumber() {
         // <number> is a valid real number expressed in one of a number of given formats
         StringBuilder numberStr = new StringBuilder();
-        Character ch = parser.getCharAt(0);
+        Character ch = parser.getCharAt();
         boolean isArray = parser.getContext().getCurrent() == ContextValues.ARRAY;
 
         while (ch != null && NUMBER_CHARS.contains(ch) && (!isArray || ch != ',')) {
             numberStr.append(ch);
             parser.setIndex(parser.getIndex() + 1);
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
         }
 
         if (numberStr.length() > 0 &&

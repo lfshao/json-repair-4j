@@ -34,7 +34,7 @@ public class ArrayParser implements JsonElementParser {
         List<Object> arr = new ArrayList<>();
         parser.getContext().set(ContextValues.ARRAY);
 
-        Character ch = parser.getCharAt(0);
+        Character ch = parser.getCharAt();
         while (ch != null && ch != ']' && ch != '}') {
             parser.skipWhitespacesAt();
             Object value = "";
@@ -66,10 +66,10 @@ public class ArrayParser implements JsonElementParser {
             }
 
             // skip over whitespace after a value but before closing ]
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             while (ch != null && ch != ']' && (Character.isWhitespace(ch) || ch == ',')) {
                 parser.setIndex(parser.getIndex() + 1);
-                ch = parser.getCharAt(0);
+                ch = parser.getCharAt();
             }
         }
 

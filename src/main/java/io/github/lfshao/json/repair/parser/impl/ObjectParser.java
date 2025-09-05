@@ -45,7 +45,7 @@ public class ObjectParser implements JsonElementParser {
             parser.skipWhitespacesAt();
 
             // Sometimes LLMs do weird things, if we find a ":" so early, we'll change it to "," and move on
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             if (ch != null && ch.equals(':')) {
                 parser.log("While parsing an object we found a : before a key, ignoring");
                 parser.setIndex(parser.getIndex() + 1);
@@ -60,10 +60,10 @@ public class ObjectParser implements JsonElementParser {
 
             // <member> starts with a <string>
             String key = "";
-            while (parser.getCharAt(0) != null) {
+            while (parser.getCharAt() != null) {
                 // The rollback index needs to be updated here in case the key is empty
                 rollbackIndex = parser.getIndex();
-                if (parser.getCharAt(0) != null && parser.getCharAt(0) == '[' && key.isEmpty()) {
+                if (parser.getCharAt() != null && parser.getCharAt() == '[' && key.isEmpty()) {
                     // Is this an array?
                     // Need to check if the previous parsed value contained in obj is an array and in that case parse and merge the two
                     String prevKey = null;
@@ -89,7 +89,7 @@ public class ObjectParser implements JsonElementParser {
                                 }
                             }
                             parser.skipWhitespacesAt();
-                            if (parser.getCharAt(0) != null && parser.getCharAt(0) == ',') {
+                            if (parser.getCharAt() != null && parser.getCharAt() == ',') {
                                 parser.setIndex(parser.getIndex() + 1);
                             }
                             parser.skipWhitespacesAt();
@@ -105,7 +105,7 @@ public class ObjectParser implements JsonElementParser {
                     parser.skipWhitespacesAt();
                 }
 
-                ch = parser.getCharAt(0);
+                ch = parser.getCharAt();
                 if (!key.isEmpty() || (key.isEmpty() && ch != null && (ch == ':' || ch == '}'))) {
                     // If the string is empty but there is a object divider, we are done here
                     break;
@@ -125,7 +125,7 @@ public class ObjectParser implements JsonElementParser {
             parser.skipWhitespacesAt();
 
             // We reached the end here
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             if (ch == null || ch.equals('}')) {
                 continue;
             }
@@ -133,7 +133,7 @@ public class ObjectParser implements JsonElementParser {
             parser.skipWhitespacesAt();
 
             // An extreme case of missing ":" after a key
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             if (ch == null || !ch.equals(':')) {
                 parser.log("While parsing an object we missed a : after a key");
             }
@@ -147,7 +147,7 @@ public class ObjectParser implements JsonElementParser {
 
             // Corner case, a lone comma
             Object value = "";
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             if (ch != null && (ch == ',' || ch == '}')) {
                 parser.log("While parsing an object value we found a stray , ignoring it");
             } else {
@@ -158,7 +158,7 @@ public class ObjectParser implements JsonElementParser {
             parser.getContext().reset();
             obj.put(key, value);
 
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
             if (ch != null && (ch == ',' || ch == '\'' || ch == '"')) {
                 parser.setIndex(parser.getIndex() + 1);
             }

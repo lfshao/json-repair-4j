@@ -110,7 +110,7 @@ public class JsonParser {
      */
     public Object parseJson() {
         while (true) {
-            Character ch = getCharAt(0);
+            Character ch = getCharAt();
 
             // false表示我们已经到达提供的字符串的末尾
             if (ch == null) {

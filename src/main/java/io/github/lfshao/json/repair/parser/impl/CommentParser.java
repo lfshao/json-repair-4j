@@ -38,7 +38,7 @@ public class CommentParser implements JsonElementParser {
         // The comment is skipped over and an empty string is returned so that comments do not interfere
         // with the actual JSON elements.
 
-        Character ch = parser.getCharAt(0);
+        Character ch = parser.getCharAt();
         List<Character> terminationCharacters = new ArrayList<>(Arrays.asList('\n', '\r'));
 
         if (parser.getContext().contains(ContextValues.ARRAY)) {
@@ -57,7 +57,7 @@ public class CommentParser implements JsonElementParser {
             while (ch != null && !terminationCharacters.contains(ch)) {
                 comment.append(ch);
                 parser.setIndex(parser.getIndex() + 1);
-                ch = parser.getCharAt(0);
+                ch = parser.getCharAt();
             }
             parser.log("Found line comment: " + comment + ", ignoring");
         }
@@ -68,11 +68,11 @@ public class CommentParser implements JsonElementParser {
             if (nextChar != null && nextChar == '/') {
                 StringBuilder comment = new StringBuilder("//");
                 parser.setIndex(parser.getIndex() + 2); // Skip both slashes.
-                ch = parser.getCharAt(0);
+                ch = parser.getCharAt();
                 while (ch != null && !terminationCharacters.contains(ch)) {
                     comment.append(ch);
                     parser.setIndex(parser.getIndex() + 1);
-                    ch = parser.getCharAt(0);
+                    ch = parser.getCharAt();
                 }
                 parser.log("Found line comment: " + comment + ", ignoring");
             }
@@ -81,7 +81,7 @@ public class CommentParser implements JsonElementParser {
                 StringBuilder comment = new StringBuilder("/*");
                 parser.setIndex(parser.getIndex() + 2); // Skip '/*'
                 while (true) {
-                    ch = parser.getCharAt(0);
+                    ch = parser.getCharAt();
                     if (ch == null) {
                         parser.log("Reached end-of-string while parsing block comment; unclosed block comment.");
                         break;

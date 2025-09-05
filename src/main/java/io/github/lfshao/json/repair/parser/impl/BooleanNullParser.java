@@ -29,7 +29,7 @@ public class BooleanNullParser implements JsonElementParser {
     public Object parseBooleanOrNull() {
         // <boolean> is one of the literal strings 'true', 'false', or 'null' (unquoted)
         int startingIndex = parser.getIndex();
-        Character ch = parser.getCharAt(0);
+        Character ch = parser.getCharAt();
         String charLower = ch != null ? ch.toString().toLowerCase() : "";
 
         String targetWord = null;
@@ -52,7 +52,7 @@ public class BooleanNullParser implements JsonElementParser {
                     charLower.equals(String.valueOf(targetWord.charAt(i)))) {
                 i++;
                 parser.setIndex(parser.getIndex() + 1);
-                ch = parser.getCharAt(0);
+                ch = parser.getCharAt();
                 charLower = ch != null ? ch.toString().toLowerCase() : "";
             }
             if (i == targetWord.length()) {

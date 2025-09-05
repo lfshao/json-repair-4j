@@ -41,7 +41,7 @@ public class StringParser implements JsonElementParser {
         char lstringDelimiter = '"';
         char rstringDelimiter = '"';
 
-        Character ch = parser.getCharAt(0);
+        Character ch = parser.getCharAt();
         if (ch != null && (ch == '#' || ch == '/')) {
             return new CommentParser(parser).parseComment();
         }
@@ -49,7 +49,7 @@ public class StringParser implements JsonElementParser {
         // A valid string can only start with a valid quote or, in our case, with a literal
         while (ch != null && !JsonParser.STRING_DELIMITERS.contains(ch) && !Character.isLetterOrDigit(ch)) {
             parser.setIndex(parser.getIndex() + 1);
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
         }
 
         if (ch == null) {
@@ -83,8 +83,8 @@ public class StringParser implements JsonElementParser {
         }
 
         // There is sometimes a weird case of doubled quotes, we manage this also later in the while loop
-        if (parser.getCharAt(0) != null && JsonParser.STRING_DELIMITERS.contains(parser.getCharAt(0)) &&
-                parser.getCharAt(0) == lstringDelimiter) {
+        if (parser.getCharAt() != null && JsonParser.STRING_DELIMITERS.contains(parser.getCharAt()) &&
+                parser.getCharAt() == lstringDelimiter) {
             // If it's an empty key, this was easy
             Character nextChar = parser.getCharAt(1);
             if ((parser.getContext().getCurrent() == ContextValues.OBJECT_KEY && nextChar != null && nextChar == ':') ||
@@ -132,7 +132,7 @@ public class StringParser implements JsonElementParser {
         // * It finds a closing quote
         // * It iterated over the entire sequence
         // * If we are fixing missing quotes in an object, when it finds the special terminators
-        ch = parser.getCharAt(0);
+        ch = parser.getCharAt();
         boolean unmatchedDelimiter = false;
 
         while (ch != null && ch != rstringDelimiter) {
@@ -242,7 +242,7 @@ public class StringParser implements JsonElementParser {
 
             stringAcc.append(ch);
             parser.setIndex(parser.getIndex() + 1);
-            ch = parser.getCharAt(0);
+            ch = parser.getCharAt();
 
             // Unclosed string ends with a \ character. This character is ignored if streamStable = True.
             if (parser.isStreamStable() && ch == null && stringAcc.length() > 0 &&
@@ -262,7 +262,7 @@ public class StringParser implements JsonElementParser {
                     escapeSeqs.put('b', '\b');
                     stringAcc.append(escapeSeqs.getOrDefault(ch, ch));
                     parser.setIndex(parser.getIndex() + 1);
-                    ch = parser.getCharAt(0);
+                    ch = parser.getCharAt();
                     while (ch != null && stringAcc.length() > 0 &&
                             stringAcc.charAt(stringAcc.length() - 1) == '\\' &&
                             Arrays.asList(rstringDelimiter, '\\').contains(ch)) {
@@ -271,7 +271,7 @@ public class StringParser implements JsonElementParser {
                         stringAcc.setLength(stringAcc.length() - 1);
                         stringAcc.append(ch);
                         parser.setIndex(parser.getIndex() + 1);
-                        ch = parser.getCharAt(0);
+                        ch = parser.getCharAt();
                     }
                     continue;
                 } else if (Arrays.asList('u', 'x').contains(ch)) {
@@ -286,7 +286,7 @@ public class StringParser implements JsonElementParser {
                         stringAcc.setLength(stringAcc.length() - 1);
                         stringAcc.append((char) Integer.parseInt(nextChars, 16));
                         parser.setIndex(parser.getIndex() + 1 + numChars);
-                        ch = parser.getCharAt(0);
+                        ch = parser.getCharAt();
                         continue;
                     }
                 } else if (JsonParser.STRING_DELIMITERS.contains(ch) && ch != rstringDelimiter) {
@@ -294,7 +294,7 @@ public class StringParser implements JsonElementParser {
                     stringAcc.setLength(stringAcc.length() - 1);
                     stringAcc.append(ch);
                     parser.setIndex(parser.getIndex() + 1);
-                    ch = parser.getCharAt(0);
+                    ch = parser.getCharAt();
                     continue;
                 }
             }
@@ -354,7 +354,7 @@ public class StringParser implements JsonElementParser {
                         if (nextC != null && nextC == ':') {
                             // Reset the cursor
                             parser.setIndex(parser.getIndex() - 1);
-                            ch = parser.getCharAt(0);
+                            ch = parser.getCharAt();
                             parser.log("In a string with missing quotes and object value context, I found a delimeter but it turns out it was the beginning on the next key. Stopping here.");
                             break;
                         }
@@ -363,7 +363,7 @@ public class StringParser implements JsonElementParser {
                     unmatchedDelimiter = false;
                     stringAcc.append(ch);
                     parser.setIndex(parser.getIndex() + 1);
-                    ch = parser.getCharAt(0);
+                    ch = parser.getCharAt();
                 } else {
                     // Check if eventually there is a rstringDelimiter, otherwise we bail
                     int i = 1;
@@ -398,7 +398,7 @@ public class StringParser implements JsonElementParser {
                             parser.log("While parsing a string, we a misplaced quote that would have closed the string but has a different meaning here, ignoring it");
                             stringAcc.append(ch);
                             parser.setIndex(parser.getIndex() + 1);
-                            ch = parser.getCharAt(0);
+                            ch = parser.getCharAt();
                             continue;
                         }
                     } else if (nextC != null && nextC == rstringDelimiter &&
@@ -430,7 +430,7 @@ public class StringParser implements JsonElementParser {
                                     parser.log("While parsing a string, we a misplaced quote that would have closed the string but has a different meaning here, ignoring it");
                                     stringAcc.append(ch);
                                     parser.setIndex(parser.getIndex() + 1);
-                                    ch = parser.getCharAt(0);
+                                    ch = parser.getCharAt();
                                     continue;
                                 }
                             }
@@ -453,7 +453,7 @@ public class StringParser implements JsonElementParser {
                                 unmatchedDelimiter = !unmatchedDelimiter;
                                 stringAcc.append(ch);
                                 parser.setIndex(parser.getIndex() + 1);
-                                ch = parser.getCharAt(0);
+                                ch = parser.getCharAt();
                             }
                         } else if (parser.getContext().getCurrent() == ContextValues.ARRAY) {
                             // Let's check if after this quote there are two quotes in a row followed by a comma or a closing bracket
@@ -473,7 +473,7 @@ public class StringParser implements JsonElementParser {
                                 unmatchedDelimiter = !unmatchedDelimiter;
                                 stringAcc.append(ch);
                                 parser.setIndex(parser.getIndex() + 1);
-                                ch = parser.getCharAt(0);
+                                ch = parser.getCharAt();
                             } else {
                                 break;
                             }
@@ -482,7 +482,7 @@ public class StringParser implements JsonElementParser {
                             parser.log("While parsing a string in Object Key context, we detected a quoted section that would have closed the string but has a different meaning here, ignoring it");
                             stringAcc.append(ch);
                             parser.setIndex(parser.getIndex() + 1);
-                            ch = parser.getCharAt(0);
+                            ch = parser.getCharAt();
                         }
                     }
                 }
@@ -493,7 +493,7 @@ public class StringParser implements JsonElementParser {
                 Character.isWhitespace(ch)) {
             parser.log("While parsing a string, handling an extreme corner case in which the LLM added a comment instead of valid string, invalidate the string and return an empty value");
             parser.skipWhitespacesAt();
-            if (parser.getCharAt(0) == null || (parser.getCharAt(0) != ':' && parser.getCharAt(0) != ',')) {
+            if (parser.getCharAt() == null || (parser.getCharAt() != ':' && parser.getCharAt() != ',')) {
                 return "";
             }
         }
