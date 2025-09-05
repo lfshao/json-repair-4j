@@ -147,6 +147,10 @@ public class JsonParser {
         }
     }
 
+    public Character getCharAt() {
+        return getCharAt(0);
+    }
+
     /**
      * 跳过空白字符
      *

@@ -36,8 +36,7 @@ public class ObjectParser implements JsonElementParser {
         // <object> ::= '{' [ <member> *(', ' <member>) ] '}' ; A sequence of 'members'
         Map<String, Object> obj = new LinkedHashMap<>();
 
-        Character ch = parser.getCharAt(0);
-        while ((ch != null ? ch : '}') != '}') {
+        for (Character ch = parser.getCharAt(); (ch != null ? ch : '}') != '}'; ch = parser.getCharAt()) {
 
             // This is what we expect to find:
             // <member> ::= <string> ': ' <json>
