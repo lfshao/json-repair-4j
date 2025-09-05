@@ -229,5 +229,17 @@ public class ParseStringTest {
 
         assertEquals("[\"start \\\"middle\\\" end\"]",
                 JsonRepair.repair("[\"start \"middle\" end\"]"));
+
+        assertEquals("[{\"key\":\"one“two\\\":\\\"three”，four“five”six\",\"level\":1},{\"key\":\"one“two\\\":\\\"three”，four“five”six\",\"level\":2}]",
+                JsonRepair.repair("[\n" +
+                        "    {\n" +
+                        "      \"key\": \"one“two\":\"three”，four“five”six\",\n" +
+                        "      \"level\": 1\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"key\": \"one“two\":\"three”，four“five”six\",\n" +
+                        "      \"level\": 2\n" +
+                        "    }\n" +
+                        "]"));
     }
 } 
